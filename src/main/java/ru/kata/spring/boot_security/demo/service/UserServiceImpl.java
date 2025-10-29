@@ -13,6 +13,7 @@ import ru.kata.spring.boot_security.demo.model.User;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -31,15 +32,18 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void addUser(UserDto userDto) {
         User user = new User();
+        Set<Role> roles = new HashSet<>();
+        Role role = roleService.getRoleById(userDto.getRoleId());
+        roles.add(role);
+        if (role.getName().equals("ROLE_ADMIN")) {
+            Role userRole = roleService.getRoleByName("ROLE_USER");
+            roles.add(userRole);
+        }
         user.setUsername(userDto.getUsername());
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
         user.setAge(userDto.getAge());
-
-        if (userDto.getRoleId() != null) {
-            Role role = roleService.getRoleById(userDto.getRoleId());
-            user.setRole(new HashSet<>(Collections.singletonList(role)));
-        }
+        user.setRole(roles);
 
         if (userDto.getPassword() != null && !userDto.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(userDto.getPassword()));
@@ -58,10 +62,14 @@ public class UserServiceImpl implements UserService {
         user.setLastName(userDto.getLastName());
         user.setAge(userDto.getAge());
 
-        if (userDto.getRoleId() != null) {
-            Role role = roleService.getRoleById(userDto.getRoleId());
-            user.setRole(new HashSet<>(Collections.singletonList(role)));
+        Set<Role> roles = new HashSet<>();
+        Role role = roleService.getRoleById(userDto.getRoleId());
+        roles.add(role);
+        if (role.getName().equals("ROLE_ADMIN")) {
+            Role userRole = roleService.getRoleByName("ROLE_USER");
+            roles.add(userRole);
         }
+        user.setRole(roles);
 
         if (userDto.getPassword() != null && !userDto.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(userDto.getPassword()));

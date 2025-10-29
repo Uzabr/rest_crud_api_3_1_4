@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <td>${user.firstName || ''}</td>
             <td>${user.lastName || ''}</td>
             <td>${user.age || ''}</td>
-            <td>${user.roles ? user.roles.map(role => role.name).join(', ') : ''}</td>
+            <td>${user.role ? user.role.map(role => role.name.replace('ROLE_', '')).join(', ') : ''}</td>
             <td>
                 <button class="btn btn-sm btn-outline-primary edit-user" data-user-id="${user.id}">
                     Edit
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${user.firstName || ''}</td>
                 <td>${user.lastName || ''}</td>
                 <td>${user.age || ''}</td>
-                <td>${user.roles ? user.roles.map(role => role.name).join(', ') : ''}</td>
+                <td>${user.role ? user.role.map(role => role.name.replace('ROLE_', '')).join(', ') : ''}</td>
             </tr>
         `;
     }
