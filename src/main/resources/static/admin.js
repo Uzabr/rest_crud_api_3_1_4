@@ -259,14 +259,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 body: JSON.stringify(userData)
             });
-
             if (response.ok) {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('createUserModal'));
-                modal.hide();
                 form.reset();
                 await loadAllUsers();
                 showAlert('User created successfully!', 'success');
-            } else {
+
+                // Переключаемся на вкладку с таблицей пользователей
+                const usersTab = document.getElementById('nav-home-tab');
+                if (usersTab) {
+                    const bootstrapTab = new bootstrap.Tab(usersTab);
+                    bootstrapTab.show();
+                }
+            }
+             else {
                 const errorText = await response.text();
                 throw new Error(`Failed to create user: ${errorText}`);
             }
