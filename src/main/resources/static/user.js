@@ -94,25 +94,23 @@ function updateUserHeader(user) {
         const roleNames = getUserRoleNames(user);
         rolesElement.textContent = roleNames || 'USER';
     }
+
+
 }
 
-// Получение названий ролей пользователя
+// Получение названий ролей пользователя (User model использует поле "role")
 function getUserRoleNames(user) {
-    let roleNames = '';
-
-    if (user.roles && Array.isArray(user.roles)) {
-        roleNames = user.roles.map(role =>
-            typeof role === 'string' ? role :
-                role.name ? role.name :
-                    role.authority ? role.authority : ''
-        ).filter(name => name).join(', ');
-    } else if (user.authorities && Array.isArray(user.authorities)) {
-        roleNames = user.authorities.map(auth =>
-            auth.authority
-        ).join(', ');
+    const getRoleName = (r) => typeof r === 'string' ? r : (r.name || r.authority || '');
+    const toArray = (arr) => Array.isArray(arr) ? arr : (arr ? [].concat(arr) : []);
+    console.log(user, );
+    const roles = user.role ? toArray(user.role) : (user.role ? toArray(user.role) : []);
+    if (roles.length > 0) {
+        return roles.map(getRoleName).filter(Boolean).join(', ');
     }
-
-    return roleNames;
+    if (user.authorities && Array.isArray(user.authorities)) {
+        return user.authorities.map(auth => auth.authority).join(', ');
+    }
+    return '';
 }
 
 // Настройка обработчиков событий

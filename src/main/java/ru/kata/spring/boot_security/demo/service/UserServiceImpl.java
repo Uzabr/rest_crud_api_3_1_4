@@ -99,6 +99,15 @@ public class UserServiceImpl implements UserService {
         userMapper.setFirstName(user.getFirstName());
         userMapper.setLastName(user.getLastName());
         userMapper.setAge(user.getAge());
+        // Берём первую роль для редактирования (приоритет у ROLE_ADMIN при нескольких ролях)
+        Set<Role> roles = user.getRole();
+        if (roles != null && !roles.isEmpty()) {
+            Role primaryRole = roles.stream()
+                    .filter(r -> "ROLE_ADMIN".equals(r.getName()))
+                    .findFirst()
+                    .orElse(roles.iterator().next());
+            userMapper.setRoleId(primaryRole.getId());
+        }
         return userMapper;
     }
 

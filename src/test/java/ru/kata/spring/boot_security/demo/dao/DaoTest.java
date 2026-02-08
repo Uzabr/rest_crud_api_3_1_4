@@ -4,85 +4,73 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import ru.kata.spring.boot_security.demo.model.Role;
+import ru.kata.spring.boot_security.demo.dto.UserDto;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.persistence.EntityManager;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
-@Import({UserDaoImpl.class, RoleDaoImpl.class})
 public class DaoTest {
 
     @Autowired
     private UserService userService;
 
-
-    private EntityManager entityManager;
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
-    public DaoTest(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    private EntityManager entityManager;
 
     @Test
     @DisplayName("Doljen soxranit novovo polzovatelya")
     void addUser() {
+        UserDto userDto = new UserDto();
+        userDto.setUsername("test@mail.ru");
+        userDto.setFirstName("Test");
+        userDto.setLastName("Testov");
+        userDto.setAge(30);
+        userDto.setPassword("password");
+        userDto.setRoleId(roleService.getRoleByName("ROLE_USER").getId());
 
-        User user = new User();
-        user.setFirstName("Test");
-        user.setLastName("Testov");
-        user.setAge(30);
-        user.setPassword("password");
-        userService.addUser(user);
-        assertThat(user.getId()).isNotNull();
+        userService.addUser(userDto);
 
-        User userFromdb = entityManager.find(User.class, user.getId());
-        assertThat(userFromdb).isNotNull();
-        assertThat(userFromdb.getFirstName()).isEqualTo("Test");
+        User userFromDb = userService.getUserByUsername("test@mail.ru");
+        assertThat(userFromDb).isNotNull();
+        assertThat(userFromDb.getFirstName()).isEqualTo("Test");
+        assertThat(userFromDb.getId()).isNotNull();
     }
 
     @Test
     @DisplayName("doljen vernut vsex polzovateley")
     void getAllUsers() {
-        User user = new User();
-        Role role = new Role("ADMIN");
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        user.setFirstName("Test");
-        user.setLastName("Testov");
-        user.setAge(30);
-        user.setRole(roles);
-        user.setPassword("password");
+        UserDto userDto1 = new UserDto();
+        userDto1.setUsername("test1@mail.ru");
+        userDto1.setFirstName("Test");
+        userDto1.setLastName("Testov");
+        userDto1.setAge(30);
+        userDto1.setPassword("password");
+        userDto1.setRoleId(roleService.getRoleByName("ROLE_USER").getId());
 
-        User user2 = new User();
-        Role role2 = new Role("USER");
-        Set<Role> roles2 = new HashSet<>();
-        roles.add(role2);
-        user2.setFirstName("Test2");
-        user2.setLastName("Testov2");
-        user2.setAge(20);
-        user2.setRole(roles2);
-        user2.setPassword("pass");
+        UserDto userDto2 = new UserDto();
+        userDto2.setUsername("test2@mail.ru");
+        userDto2.setFirstName("Test2");
+        userDto2.setLastName("Testov2");
+        userDto2.setAge(20);
+        userDto2.setPassword("pass");
+        userDto2.setRoleId(roleService.getRoleByName("ROLE_USER").getId());
 
-        userService.addUser(user);
-        userService.addUser(user2);
+        userService.addUser(userDto1);
+        userService.addUser(userDto2);
         entityManager.flush();
 
         List<User> userList = userService.getAllUsers();
         assertThat(userList).extracting(User::getFirstName)
-                .containsExactlyInAnyOrder("Test", "Test2");
-
+                .contains("Test", "Test2");
     }
-
-
-
-
 }

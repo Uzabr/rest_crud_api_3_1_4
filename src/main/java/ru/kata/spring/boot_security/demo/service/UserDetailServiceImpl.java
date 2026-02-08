@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
 import ru.kata.spring.boot_security.demo.model.User;
 
+import javax.persistence.NoResultException;
+
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
 
@@ -20,6 +22,10 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userDao.getUserByUsername(username);
+        try {
+            return userDao.getUserByUsername(username);
+        } catch (NoResultException e) {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
     }
 }

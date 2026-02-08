@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -17,19 +18,14 @@ public class Role implements GrantedAuthority {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Transient
     @ManyToMany(mappedBy = "role")
+    @JsonIgnore
     private Set<User> user = new HashSet<>();
 
     public Role() {
     }
 
     public Role(String name) {
-        if (name.equals("ADMIN")) {
-            this.id = 1L;
-        } else if (name.equals("USER")) {
-            this.id = 2L;
-        }
         this.name = name;
     }
 

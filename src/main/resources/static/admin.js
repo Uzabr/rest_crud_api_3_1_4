@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
             await loadAllRoles();
             populateRolesDropdowns();
             setupEventListeners();
+            await loadCurrentUser();
 
             // Показываем первого пользователя в информации (временно)
             if (allUsers.length > 0) {
@@ -32,14 +33,16 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Устанавливаем текущего пользователя (временно)
-            document.getElementById('currentUsername').textContent = 'admin@mail.ru';
-            document.getElementById('currentUserRoles').textContent = 'ROLE_ADMIN';
+            // document.getElementById('currentUsername').textContent = 'admin@mail.ru';
+            //     document.getElementById('currentUserRoles').textContent = 'ROLE_ADMIN';
+
 
         } catch (error) {
             console.error('Error during initialization:', error);
             showAlert('Error loading page data!', 'danger');
         }
     }
+
 
     // Загрузка всех пользователей
     async function loadAllUsers() {
@@ -94,6 +97,51 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Загрузка текущего пользователя
+    async function loadCurrentUser() {
+        try {
+            console.log('Loading current user...');
+            const response = await fetch('/api/user/current', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [headerName]: token
+                }
+            });
+
+            console.log('Current user response status:', response.status);
+
+            if (response.ok) {
+                currentUser = await response.json();
+                console.log('Loaded current user:', currentUser);
+
+                // Устанавливаем данные в шапку (User model использует поле "role")
+                document.getElementById('currentUsername').textContent = currentUser.username || 'User';
+                const rolesText = getRolesText(currentUser.role);
+                document.getElementById('currentUserRoles').textContent = rolesText;
+            } else {
+                // Если эндпоинт не работает, используем данные из первого пользователя как fallback
+                console.warn('Current user endpoint not available, using first user as fallback');
+                if (allUsers.length > 0) {
+                    currentUser = allUsers[0];
+                    document.getElementById('currentUsername').textContent = currentUser.username || 'User';
+                    document.getElementById('currentUserRoles').textContent = getRolesText(currentUser.role);
+                }
+            }
+        } catch (error) {
+            console.error('Error loading current user:', error);
+            document.getElementById('currentUsername').textContent = 'User';
+            document.getElementById('currentUserRoles').textContent = 'Unknown';
+        }
+    }
+
+    // Вспомогательная функция для извлечения названий ролей (поддержка role и roles для совместимости)
+    function getRolesText(roles) {
+        if (!roles) return '';
+        const arr = Array.isArray(roles) ? roles : [].concat(roles);
+        return arr.map(r => (r.name || r.authority || r || '').replace('ROLE_', '')).filter(Boolean).join(' ');
+    }
+
     // Заполнение таблицы пользователей
     function populateUsersTable() {
         const tbody = document.querySelector('#usersTable tbody');
@@ -114,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <td>${user.firstName || ''}</td>
             <td>${user.lastName || ''}</td>
             <td>${user.age || ''}</td>
-            <td>${user.role ? user.role.map(role => role.name.replace('ROLE_', '')).join(', ') : ''}</td>
+            <td>${user.role ? [].concat(user.role).map(r => (r.name || r.authority || '').replace('ROLE_', '')).filter(Boolean).join(', ') : ''}</td>
             <td>
                 <button class="btn btn-sm btn-outline-primary edit-user" data-user-id="${user.id}">
                     Edit
@@ -144,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${user.firstName || ''}</td>
                 <td>${user.lastName || ''}</td>
                 <td>${user.age || ''}</td>
-                <td>${user.role ? user.role.map(role => role.name.replace('ROLE_', '')).join(', ') : ''}</td>
+                <td>${user.role ? [].concat(user.role).map(r => (r.name || r.authority || '').replace('ROLE_', '')).filter(Boolean).join(', ') : ''}</td>
             </tr>
         `;
     }
@@ -307,9 +355,10 @@ document.addEventListener('DOMContentLoaded', function () {
             // Сбрасываем выбор
             roleSelect.value = '';
 
-            // Устанавливаем выбранную роль пользователя (берем первую роль)
-            if (user.roles && user.roles.length > 0) {
-                roleSelect.value = user.roles[0].id;
+            // Устанавливаем выбранную роль пользователя (берем первую роль, User model использует "role")
+            const roles = user.role ? [].concat(user.role) : [];
+            if (roles.length > 0) {
+                roleSelect.value = roles[0].id || '';
             }
 
             const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
@@ -389,9 +438,10 @@ document.addEventListener('DOMContentLoaded', function () {
             // Сбрасываем выбор
             roleSelect.value = '';
 
-            // Устанавливаем выбранную роль пользователя (берем первую роль)
-            if (user.roles && user.roles.length > 0) {
-                roleSelect.value = user.roles[0].id;
+            // Устанавливаем выбранную роль пользователя (только для отображения, User model использует "role")
+            const roles = user.role ? [].concat(user.role) : [];
+            if (roles.length > 0) {
+                roleSelect.value = roles[0].id || '';
             }
 
             const modal = new bootstrap.Modal(document.getElementById('deleteUserModal'));

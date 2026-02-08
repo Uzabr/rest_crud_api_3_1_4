@@ -40,6 +40,36 @@
             font-size: 18px;
             font-weight: bold;
             display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        #currentUserRoles { white-space: normal; }
+        /* Стили для центрирования форм */
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .form-container .form-control,
+        .form-container .form-select {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-container .mb-3 {
+            text-align: center;
+        }
+
+        /* Стили для модальных окон */
+        .modal-body .form-control,
+        .modal-body .form-select {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .modal-body .mb-3 {
+            text-align: center;
         }
 
         .top-bar .text h4 {
@@ -229,8 +259,8 @@
                         </div>
 
                         <div class="container-fluid">
-                            <div class="row justify-content-center" style="margin-right: 38px;">
-                                <div class="col-md-12 p-4 bg-white border">
+                            <div class="row justify-content-center">
+                                <div class="col-md-12 p-4 bg-white border form-container">
                                     <form id="createUserForm">
                                         <div class="mb-3">
                                             <label class="form-label">Email *</label>
@@ -309,7 +339,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="editUserForm">
+                <form id="editUserForm" class="form-container">
                     <input type="hidden" id="editUserId" name="id">
                     <div class="mb-3">
                         <label class="form-label">Email *</label>
@@ -358,7 +388,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="deleteUserForm">
+                <form id="deleteUserForm" class="form-container">
                     <input type="hidden" id="deleteUserId" name="id">
                     <div class="mb-3">
                         <label class="form-label">Email</label>
