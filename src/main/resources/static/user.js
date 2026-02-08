@@ -100,16 +100,16 @@ function updateUserHeader(user) {
 
 // Получение названий ролей пользователя (User model использует поле "role")
 function getUserRoleNames(user) {
-    const getRoleName = (r) => typeof r === 'string' ? r : (r.name || r.authority || '');
+    // const getRoleName = (r) => typeof r === 'string' ? r : (r.name || r.authority || '');
     const toArray = (arr) => Array.isArray(arr) ? arr : (arr ? [].concat(arr) : []);
-    console.log(user, );
     const roles = user.role ? toArray(user.role) : (user.role ? toArray(user.role) : []);
     if (roles.length > 0) {
-        return roles.map(getRoleName).filter(Boolean).join(', ');
+        // return roles.map(getRoleName).filter(Boolean).join(', ');
+        return roles.map(r => (r.name || r.authority || r || '').replace('ROLE_', '')).filter(Boolean).join(' ');
     }
-    if (user.authorities && Array.isArray(user.authorities)) {
-        return user.authorities.map(auth => auth.authority).join(', ');
-    }
+    // if (user.authorities && Array.isArray(user.authorities)) {
+    //     return user.authorities.map(auth => auth.authority).join(', ');
+    // }
     return '';
 }
 
