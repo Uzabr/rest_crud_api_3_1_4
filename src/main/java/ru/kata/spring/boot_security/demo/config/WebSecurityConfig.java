@@ -17,7 +17,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final SuccessUserHandler successUserHandler;
     private final UserDetailsService userDetailsService;
 
-
     public WebSecurityConfig(SuccessUserHandler successUserHandler, UserDetailsService userDetailsService) {
         this.successUserHandler = successUserHandler;
         this.userDetailsService = userDetailsService;
@@ -36,18 +35,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/login")
-                .anonymous().antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/user").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
+        http.authorizeRequests()
+                .antMatchers("/login").anonymous()
+                .antMatchers("/admin", "/admin/**", "/api/admin/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/user", "/user/**", "/api/user/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
+                .antMatchers("/css/**", "/js/**", "/*.js").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().successHandler(successUserHandler);
 
-        http
-                .logout()
-                .permitAll()
+        http.
+                logout().permitAll()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/login").and().csrf().disable();
+                .logoutSuccessUrl("/login")
+                .and()
+                .csrf();
     }
 
 }
