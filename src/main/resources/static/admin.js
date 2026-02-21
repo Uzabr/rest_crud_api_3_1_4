@@ -158,10 +158,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const row = document.createElement('tr');
             row.innerHTML = `
             <td>${user.id || ''}</td>
-            <td>${user.username || ''}</td>
             <td>${user.firstName || ''}</td>
             <td>${user.lastName || ''}</td>
             <td>${user.age || ''}</td>
+            <td>${user.username || ''}</td>
             <td>${user.role ? [].concat(user.role).map(r => (r.name || r.authority || '').replace('ROLE_', '')).filter(Boolean).join(', ') : ''}</td>
             <td>
                 <button class="btn btn-sm btn-outline-primary edit-user" data-user-id="${user.id}">
@@ -188,10 +188,10 @@ document.addEventListener('DOMContentLoaded', function () {
         tbody.innerHTML = `
             <tr>
                 <td>${user.id || ''}</td>
-                <td>${user.username || ''}</td>
                 <td>${user.firstName || ''}</td>
                 <td>${user.lastName || ''}</td>
                 <td>${user.age || ''}</td>
+                <td>${user.username || ''}</td>
                 <td>${user.role ? [].concat(user.role).map(r => (r.name || r.authority || '').replace('ROLE_', '')).filter(Boolean).join(', ') : ''}</td>
             </tr>
         `;

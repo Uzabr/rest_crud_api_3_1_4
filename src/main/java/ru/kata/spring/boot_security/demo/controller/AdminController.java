@@ -1,9 +1,7 @@
 package ru.kata.spring.boot_security.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.dto.UserDto;
@@ -16,20 +14,18 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/admin")
-@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
     private final UserService userService;
-    private RoleService roleService;
+    private final RoleService roleService;
 
-    @Autowired
-    public AdminController(UserService userService,  RoleService roleService) {
+    public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> adminPageData() {
+    public ResponseEntity<List<User>> getAdminPageData() {
         List<User> list = userService.getAllUsers();
         return ResponseEntity.ok(list);
     }

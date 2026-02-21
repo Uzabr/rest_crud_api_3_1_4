@@ -71,10 +71,10 @@ function renderUserInfo(user) {
 
     row.innerHTML = `
         <td>${user.id || ''}</td>
-        <td>${escapeHtml(user.username || '')}</td>
         <td>${escapeHtml(user.firstName || '')}</td>
         <td>${escapeHtml(user.lastName || '')}</td>
         <td>${user.age || ''}</td>
+        <td>${escapeHtml(user.username || '')}</td>
         <td>${roleNames}</td>
     `;
 
