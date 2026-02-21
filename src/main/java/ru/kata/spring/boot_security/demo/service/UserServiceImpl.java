@@ -10,7 +10,6 @@ import ru.kata.spring.boot_security.demo.dto.UserDto;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,9 +17,9 @@ import java.util.Set;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private UserDao userDao;
-    private PasswordEncoder passwordEncoder;
-    private RoleService roleService;
+    private final UserDao userDao;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
     public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.userDao = userDao;

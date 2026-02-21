@@ -13,15 +13,14 @@ import java.security.Principal;
 @RequestMapping("/api/user")
 public class UserController {
 
-    private UserService userService;
-
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping("/current")
-    public ResponseEntity<User> userPage(Principal principal) {
+    public ResponseEntity<User> getCurrentUser(Principal principal) {
         User user = userService.getUserByUsername(principal.getName());
         return ResponseEntity.ok(user);
     }
