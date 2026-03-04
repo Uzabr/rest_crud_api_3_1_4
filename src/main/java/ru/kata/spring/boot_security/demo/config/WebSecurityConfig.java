@@ -37,8 +37,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/login").anonymous()
-                .antMatchers("/admin", "/admin/**", "/api/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/user", "/user/**", "/api/user/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
+                .antMatchers( "/**/admin/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/**/user/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
                 .antMatchers("/css/**", "/js/**", "/*.js").permitAll()
                 .anyRequest().authenticated()
                 .and()
